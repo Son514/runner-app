@@ -1,0 +1,14 @@
+#Python virtual environments
+venv/ env/
+#Node.js
+node_modules/ dist/
+#Environment variables
+.env
+#Python cache
+pycache/ *.pyc
+#IDE files
+.vscode/ .idea/
+#Logs
+*.log
+#Build artifacts
+dist/ build/
