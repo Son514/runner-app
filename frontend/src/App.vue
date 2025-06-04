@@ -21,12 +21,14 @@ export default {
     this.map = new mapboxgl.Map({
       container: "map",
       style: "mapbox://styles/mapbox/streets-v11",
-      center: [-74.5, 40], // Default: New York
-      zoom: 9,
+      center: [13.404954, 52.520008], // Starting position [lng, lat] (Berlin, Germany)
+      zoom: 10, // Starting zoom level
     });
 
     // Add marker
-    this.marker = new mapboxgl.Marker().setLngLat([-74.5, 40]).addTo(this.map);
+    this.marker = new mapboxgl.Marker()
+      .setLngLat([13.404954, 52.520008])
+      .addTo(this.map);
 
     // Connect to WebSocket
     this.ws = new WebSocket(process.env.VUE_APP_WS_URL); // Adjust for Kubernetes service port
