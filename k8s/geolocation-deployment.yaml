@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: geolocation-producer
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: geolocation-producer
+  template:
+    metadata:
+      labels:
+        app: geolocation-producer
+    spec:
+      containers:
+        - name: geolocation-producer
+          image: markesplana514/geolocation-image:v1
+          imagePullPolicy: Never
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+          env:
+            - name: RABBITMQ_HOST
+              value: "rabbitmq-service"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: geolocation-producer-service
+  namespace: default
+spec:
+  selector:
+    app: geolocation-producer
+  ports:
+    - port: 80
+      targetPort: 80
+  type: ClusterIP

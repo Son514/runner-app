@@ -23,7 +23,7 @@ def fetch_geolocation_data():
 def connect_to_rabbitmq():
     try:
         connection = pika.BlockingConnection(
-            pika.ConnectionParameters(host='localhost')
+            pika.ConnectionParameters(host=RABBITMQ_HOST)
         )
         channel = connection.channel()
         channel.queue_declare(queue=QUEUE_NAME, durable=True)

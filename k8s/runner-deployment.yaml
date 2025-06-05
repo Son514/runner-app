@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: runner-consumer
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: runner-consumer
+  template:
+    metadata:
+      labels:
+        app: runner-consumer
+    spec:
+      containers:
+        - name: runner-consumer
+          image: markesplana514/runner-image:v1
+          imagePullPolicy: Never
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+          env:
+            - name: RABBITMQ_HOST
+              value: "rabbitmq-service"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: runner-consumer-service
+  namespace: default
+spec:
+  selector:
+    app: runner-consumer
+  ports:
+    - port: 80
+      targetPort: 80
+  type: ClusterIP
