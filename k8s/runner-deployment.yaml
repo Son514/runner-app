@@ -27,6 +27,8 @@ spec:
           env:
             - name: RABBITMQ_HOST
               value: "rabbitmq-service"
+            - name: MONGODB_HOST
+              value: "mongodb-service"
 ---
 apiVersion: v1
 kind: Service
