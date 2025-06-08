@@ -41,7 +41,7 @@ def main():
             connection, channel = connect_to_rabbitmq()
 
             # Extract runners
-            starters = data["starters"][:2]
+            starters = data["starters"][:10]
             print(f"Starters: {starters}")
 
             if channel:
@@ -62,7 +62,7 @@ def main():
             print("No data to send")
         
         # Wait before next fetch
-        time.sleep(60)  # Fetch every 60 seconds
+        time.sleep(10)  # Fetch every 60 seconds
 
 if __name__ == "__main__":
     main()

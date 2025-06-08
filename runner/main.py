@@ -5,6 +5,7 @@ import logging
 import time
 import pymongo
 from pymongo.errors import ConnectionFailure
+import requests
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -17,6 +18,9 @@ QUEUE_NAME = "geolocation_queue"
 # MongoDB connection parameters
 MONGODB_HOST = os.getenv("MONGODB_HOST", "localhost:30003")
 MONGODB_URI = f"mongodb://{MONGODB_HOST}"
+
+# FastAPI endpoint
+FASTAPI_URL = "http://api-gateway:81/coordinates"
 
 def connect_to_mongodb():
     try:
@@ -52,8 +56,20 @@ def callback(ch, method, properties, body, db):
             # Store data in MongoDB
             db.testcollection.insert_many(data)
             logger.info("Data stored in MongoDB")
+            logger.info(f"data after insertion: {data}")
         else:
             logger.warning("No MongoDB connection, data not stored")
+        
+        # Send data to FastAPI
+        try:
+            response = requests.post(FASTAPI_URL, json=json.loads(body))
+            if response.status_code == 200:
+                logger.info("Data sent to FastAPI")
+            else:
+                logger.error(f"Failed to send data to FastAPI: {response.status_code}")
+        except requests.RequestException as e:
+            logger.error(f"Error sending data to FastAPI: {e}")
+        
         ch.basic_ack(delivery_tag=method.delivery_tag)
     except json.JSONDecodeError as e:
         logger.error(f"Error decoding JSON: {e}")
@@ -70,7 +86,7 @@ def main():
         if not mongodb_client:
             mongodb_client = connect_to_mongodb()
             if mongodb_client:
-                db = mongodb_client["testdb"]  # Use or create database
+                db = mongodb_client["testdb"]
             else:
                 logger.warning("MongoDB not connected, continuing without DB")
 
@@ -79,7 +95,6 @@ def main():
         if channel:
             try:
                 channel.basic_qos(prefetch_count=1)
-                # Pass the MongoDB database to the callback
                 channel.basic_consume(
                     queue=QUEUE_NAME,
                     on_message_callback=lambda ch, method, props, body: callback(ch, method, props, body, db)
@@ -95,14 +110,17 @@ def main():
         else:
             logger.warning("RabbitMQ not connected, retrying...")
 
-        # If MongoDB connection failed, reset to retry
-        if mongodb_client and not mongodb_client.admin.command('ping'):
-            logger.warning("MongoDB connection lost, will retry")
-            mongodb_client.close()
-            mongodb_client = None
-            db = None
+        # Check MongoDB connection
+        if mongodb_client:
+            try:
+                mongodb_client.admin.command('ping')
+            except:
+                logger.warning("MongoDB connection lost, will retry")
+                mongodb_client.close()
+                mongodb_client = None
+                db = None
 
-        time.sleep(5)  # Retry after 5 seconds if failed
+        time.sleep(5)
         logger.info("Retrying connections...")
 
 if __name__ == "__main__":

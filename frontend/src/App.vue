@@ -11,7 +11,7 @@ export default {
   data() {
     return {
       map: null,
-      marker: null,
+      marker: {},
       ws: null,
     };
   },
@@ -25,18 +25,31 @@ export default {
       zoom: 10, // Starting zoom level
     });
 
-    // Add marker
-    this.marker = new mapboxgl.Marker()
-      .setLngLat([13.404954, 52.520008])
-      .addTo(this.map);
-
     // Connect to WebSocket
     this.ws = new WebSocket(process.env.VUE_APP_WS_URL); // Adjust for Kubernetes service port
     this.ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      const { latitude, longitude } = data;
-      this.marker.setLngLat([longitude, latitude]);
-      this.map.panTo([longitude, latitude]);
+
+      // Loop through each runner's data
+      data.forEach((runner) => {
+        const deviceId = runner.device?.deviceId;
+        const { lat, lng } = runner.current;
+
+        // // Skip if no valid coordinates
+        if (!lat || !lng) return;
+
+        // Update or create marker
+        if (this.marker?.[deviceId]) {
+          // Update existing marker position
+          this.marker[deviceId].setLngLat([lng, lat]);
+        } else {
+          // Create new marker
+          this.marker[deviceId] = new mapboxgl.Marker()
+            .setLngLat([lng, lat])
+            .setPopup(new mapboxgl.Popup().setText(`Runner ${runner.name}`))
+            .addTo(this.map);
+        }
+      });
     };
   },
   beforeUnmount() {
