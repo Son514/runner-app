@@ -13,3 +13,8 @@ module "vpc" {
   private_subnet_1_cidr = var.private_subnet_1_cidr
   private_subnet_2_cidr = var.private_subnet_2_cidr
 }
+
+# Call the ECR module
+module "ecr" {
+  source = "./modules/ecr"
+}
