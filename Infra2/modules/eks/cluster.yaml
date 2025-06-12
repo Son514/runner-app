@@ -1,0 +1,31 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: my-eks-cluster
+  region: ap-southeast-1
+
+vpc:
+  id: "vpc-00e001f6b797bf53e" # Replace with vpc_id from terraform output
+  subnets:
+    public:
+      public-1:
+        id: "subnet-085a6fa3884d87696" # Replace with public_subnet_1_id
+      public-2:
+        id: "subnet-0080f3f03be59f966" # Replace with public_subnet_2_id
+    private:
+      private-1:
+        id: "subnet-0db5d7839dc73768a" # Replace with private_subnet_1_id
+      private-2:
+        id: "subnet-0433e9d129669cff7" # Replace with private_subnet_2_id
+
+nodeGroups:
+  - name: worker-nodes
+    instanceType: t3.medium
+    desiredCapacity: 3
+    minSize: 3
+    maxSize: 3
+    privateNetworking: true
+    subnets:
+      - private-1
+      - private-2
