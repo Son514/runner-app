@@ -23,7 +23,22 @@ output "private_subnet_2_id" {
   value       = module.vpc.private_subnet_2_id
 }
 
-output "ecr_repository_url" {
-  description = "URL of the ECR repository"
-  value       = module.ecr.repository_url
+output "frontend_repository_url" {
+  description = "URL of the Frontend ECR repository"
+  value       = module.ecr.frontend_repository_url
+}
+
+output "api_gateway_repository_url" {
+  description = "URL of the API Gateway ECR repository"
+  value       = module.ecr.api_gateway_repository_url
+}
+
+output "runner_repository_url" {
+  description = "URL of the Runner ECR repository"
+  value       = module.ecr.runner_repository_url
+}
+
+output "geolocation_repository_url" {
+  description = "URL of the Geolocation ECR repository"
+  value       = module.ecr.geolocation_repository_url
 }
