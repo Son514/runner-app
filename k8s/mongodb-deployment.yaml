@@ -30,7 +30,7 @@ spec:
       volumes:
         - name: mongodb-storage
           persistentVolumeClaim:
-            claimName: mongodb-pvc
+            claimName: ebs-claim
 ---
 apiVersion: v1
 kind: Service
