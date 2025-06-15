@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
         - name: api-gateway
-          image: markesplana514/apigateway-image:v1
+          image: 217100784311.dkr.ecr.ap-southeast-1.amazonaws.com/api-gateway-repo:v1
+          imagePullPolicy: Always
           ports:
             - containerPort: 8000
           resources:
@@ -24,16 +25,23 @@ spec:
             limits:
               cpu: 200m
               memory: 256Mi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: api-gateway
+  name: api-gateway-service
+  namespace: default
 spec:
   selector:
     app: api-gateway
   ports:
-    - port: 81
+    - protocol: TCP
+      port: 80
       targetPort: 8000
-      nodePort: 30081
-  type: NodePort
+  type: LoadBalancer
