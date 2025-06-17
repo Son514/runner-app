@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
         - name: runner-consumer
-          image: markesplana514/runner-image:v1
-          imagePullPolicy: Never
+          image: 217100784311.dkr.ecr.ap-southeast-1.amazonaws.com/runner-repo:v1
+          imagePullPolicy: Always
           resources:
             requests:
               cpu: 100m
@@ -29,6 +29,16 @@ spec:
               value: "rabbitmq-service"
             - name: MONGODB_HOST
               value: "mongodb-service"
+            - name: MONGO_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-credentials
+                  key: mongodb-username
+            - name: MONGO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-credentials
+                  key: mongodb-password
 ---
 apiVersion: v1
 kind: Service

@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
         - name: geolocation-producer
-          image: markesplana514/geolocation-image:v1
-          imagePullPolicy: Never
+          image: 217100784311.dkr.ecr.ap-southeast-1.amazonaws.com/geolocation-repo:v1
+          imagePullPolicy: Always
           resources:
             requests:
               cpu: 100m

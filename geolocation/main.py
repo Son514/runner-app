@@ -8,7 +8,7 @@ import os
 API_URL = "https://racemap.com/api/data/v1/66bf4318d1c783279d183dd3/current"
 
 # RabbitMQ connection parameters
-RABBITMQ_HOST = os.getenv("RABBITMQ_HOST", "rabbitmq-service")
+RABBITMQ_HOST = os.getenv("RABBITMQ_HOST", "rabbitmq-service.default.svc.cluster.local")
 QUEUE_NAME = "geolocation_queue"
 
 def fetch_geolocation_data():

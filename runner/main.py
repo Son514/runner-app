@@ -12,15 +12,19 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 # RabbitMQ connection parameters
-RABBITMQ_HOST = os.getenv("RABBITMQ_HOST", "rabbitmq-service")
+RABBITMQ_HOST = os.getenv("RABBITMQ_HOST", "rabbitmq-service.default.svc.cluster.local")
 QUEUE_NAME = "geolocation_queue"
 
+# Get credentials from environment variables
+username = os.getenv("MONGO_USERNAME")
+password = os.getenv("MONGO_PASSWORD")
+
 # MongoDB connection parameters
-MONGODB_HOST = os.getenv("MONGODB_HOST", "localhost:30003")
-MONGODB_URI = f"mongodb://{MONGODB_HOST}"
+MONGODB_HOST = "@mongodb-service.default.svc.cluster.local:27017"
+MONGODB_URI = f"mongodb://{username}:{password}{MONGODB_HOST}"
 
 # FastAPI endpoint
-FASTAPI_URL = "http://api-gateway:81/coordinates"
+FASTAPI_URL = "http://api-gateway-service.default.svc.cluster.local:81/coordinates"
 
 def connect_to_mongodb():
     try:
